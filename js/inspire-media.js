@@ -1,5 +1,8 @@
 $(function(){
 
+// Dropdown menu
+$( "#speed" ).selectmenu();
+
 var AMOUNT = 100;
 
 var container;
@@ -17,6 +20,8 @@ var mouseY = 0;
 
 var windowHalfX = window.innerWidth / 2;
 var windowHalfY = window.innerHeight / 2;
+
+var yOffset = 30;
 
 init();
 render();
@@ -73,10 +78,11 @@ function init() {
 
 	mesh = new THREE.Mesh( plane, material );
 	mesh.scale.x = mesh.scale.y = mesh.scale.z = 1.5;
+	mesh.position.y = - yOffset;
 	scene.add(mesh);
 
 	mesh = new THREE.Mesh( plane, materialReflection );
-	mesh.position.y = -306;
+	mesh.position.y = -306 - yOffset;
 	mesh.rotation.x = - Math.PI;
 	mesh.scale.x = mesh.scale.y = mesh.scale.z = 1.5;
 	scene.add( mesh );
@@ -107,7 +113,7 @@ function init() {
 
 			particle = new THREE.Sprite( material );
 			particle.position.x = ix * separation - ( ( amountx * separation ) / 2 );
-			particle.position.y = -153;
+			particle.position.y = -153 - yOffset;
 			particle.position.z = iy * separation - ( ( amounty * separation ) / 2 );
 			particle.scale.x = particle.scale.y = 2;
 			scene.add( particle );
@@ -131,7 +137,7 @@ function init() {
 			var logoPlane = new THREE.PlaneGeometry( imgWidth / 2, imgHeight/2, 4, 4 );
 			var logo = new THREE.Mesh( logoPlane, logoMaterial );
 
-			logo.position.y = 300;
+			logo.position.y = 270;
 
 			scene.add( logo );
 		});
