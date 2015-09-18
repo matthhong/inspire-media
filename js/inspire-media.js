@@ -1,3 +1,5 @@
+$(function(){
+
 var AMOUNT = 100;
 
 var container;
@@ -17,20 +19,12 @@ var windowHalfX = window.innerWidth / 2;
 var windowHalfY = window.innerHeight / 2;
 
 init();
-animate();
+render();
 
 function init() {
 
 	container = document.createElement( 'div' );
 	document.body.appendChild( container );
-
-	var info = document.createElement( 'div' );
-	info.style.position = 'absolute';
-	info.style.top = '10px';
-	info.style.width = '100%';
-	info.style.textAlign = 'center';
-	info.innerHTML = '<a href="http://threejs.org" target="_blank">three.js</a> - video demo. playing <a href="http://durian.blender.org/" target="_blank">sintel</a> trailer';
-	container.appendChild( info );
 
 	camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 1, 10000 );
 	camera.position.z = 1000;
@@ -123,14 +117,24 @@ function init() {
 	}
 
 	var loader = new THREE.ImageLoader();
-	var context = canvas.getContext( '2d' );
 
 	loader.load(
 		'img/logo.png',
 		function (image) {
-			var canvas = document.createElement( 'canvas' );
-			context.drawImage( image, 100,100);
-		})
+			var imgWidth = $(image)[0].width;
+			var imgHeight = $(image)[0].height;
+
+			var logoTexture = new THREE.Texture( image );
+
+			var logoMaterial = new THREE.MeshBasicMaterial( { map: logoTexture, overdraw: 0.5 } );
+			
+			var logoPlane = new THREE.PlaneGeometry( imgWidth / 2, imgHeight/2, 4, 4 );
+			var logo = new THREE.Mesh( logoPlane, logoMaterial );
+
+			logo.position.y = 300;
+
+			scene.add( logo );
+		});
 
 	document.addEventListener( 'mousemove', onDocumentMouseMove, false );
 
@@ -184,3 +188,5 @@ function render() {
 	renderer.render( scene, camera );
 
 }
+
+});
