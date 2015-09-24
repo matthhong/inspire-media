@@ -3,18 +3,6 @@ $(function(){
 // DROPDOWN MENU
 $( "#speed" ).selectmenu();
 
-// PLAY/PAUSE (for some reason, toggle() was bugging)
-$("#logo-play")
-	.on('click', function(){
-		$(this).hide();
-		$("#logo-pause").show();
-	});
-$("#logo-pause")
-	.on('click', function(){
-		$(this).hide();
-		$("#logo-play").show();
-	});
-
 // THREE.JS
 var container;
 
@@ -23,6 +11,13 @@ var camera, scene, renderer;
 var video, image, imageContext,
 imageReflection, imageReflectionContext, imageReflectionGradient,
 texture, textureReflection;
+
+var default_image;
+
+var loader = new THREE.ImageLoader();
+
+// video or image?
+var vid = false;
 
 var light;
 
@@ -64,13 +59,8 @@ function init() {
 	renderer.setSize( window.innerWidth, window.innerHeight );
 	container.appendChild( renderer.domElement );
 
-	// SCREEN
-	var loader = new THREE.ImageLoader();
-
-	loader.load('img/eric.jpg', function(image){
-		video = image;
-	})
-	// video = document.getElementById( 'video' );
+	default_image = document.getElementById( 'default-image' );
+	video = document.getElementById( 'video' );
 
 	image = document.createElement( 'canvas' );
 	image.width = imageWidth;
@@ -205,15 +195,24 @@ function render() {
 	camera.position.y += ( - mouse.y - camera.position.y ) * 0.05;
 	camera.lookAt( scene.position );
 
-	// if ( video.readyState === video.HAVE_ENOUGH_DATA ) {
+	if ( vid && video.readyState === video.HAVE_ENOUGH_DATA ) {
 
 		imageContext.drawImage( video, 0, 0, 960, 635 );
 		// console.log(video)
 
-	// 	if ( texture ) texture.needsUpdate = true;
-	// 	if ( textureReflection ) textureReflection.needsUpdate = true;
+		if ( texture ) texture.needsUpdate = true;
+		if ( textureReflection ) textureReflection.needsUpdate = true;
 
-	// }
+	} else { 
+		// console.log('msg')
+		texture.needsUpdate = false;
+		textureReflection.needsUpdate = false;
+
+		// default_image = document.getElementById( 'default-image' );
+		// console.log(imageContext)
+
+		imageContext.drawImage( default_image, 0, 0, 960, 635 );
+	}
 
 	imageReflectionContext.drawImage( image, 0, 0 );
 	imageReflectionContext.fillStyle = imageReflectionGradient;
@@ -221,5 +220,22 @@ function render() {
 	renderer.render( scene, camera );
 
 }
+
+// PLAY/PAUSE (for some reason, toggle() was bugging)
+$("#logo-play")
+	.on('click', function(){
+		$(this).hide();
+		$("#logo-pause").show();
+
+		vid = true;
+		video.play();
+	});
+$("#logo-pause")
+	.on('click', function(){
+		$(this).hide();
+		$("#logo-play").show();
+
+		video.pause();
+	});
 
 });
